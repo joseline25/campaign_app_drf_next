@@ -7,10 +7,10 @@ from django.template.defaultfilters import slugify
 class Campaign(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField()
-    slug = models.SlugField(max_length=255)
+    slug = models.SlugField(max_length=255, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    logo = CloudinaryField('Image', overwrite=True, format='.jpg')
+    logo = CloudinaryField('Image', overwrite=True)
 
     class Meta:
         ordering = ['-created_at']
@@ -35,6 +35,8 @@ class Campaign(models.Model):
 
         # on renvoit la main à la méthode save originale
         super().save(*args, **kwargs)
+
+
 
 
 class Subscriber(models.Model):

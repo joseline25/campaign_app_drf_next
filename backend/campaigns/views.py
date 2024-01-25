@@ -1,13 +1,32 @@
 from django.shortcuts import render
-from rest_framework import generics
+from rest_framework import generics, response, status
 from .models import Campaign, Subscriber
+from .serializers import CampaignSerializer, SubscriberSerializer
 
 # Create your views here.
 
 
 # generic views for GET and POST a Subscriber
 class CampaignListAPIView(generics.ListAPIView):
-    
+    serializer_class = CampaignSerializer
     def get_queryset(self):
-        return super().get_queryset()
+        return Campaign.objects.all()
+    
+    
+class CampaignDetailAPIView(generics.GenericAPIView):
+    serializer_class = CampaignSerializer
+    
+    def get(self, request, slug):
+        # je prend un seul, j'aurai pu le faire avec le objects.get
+        query_set = Campaign.objects.filter(slug=slug).first()
         
+        if query_set:
+            return response.Response(self.serializer_class(query_set).data)
+        return response.Response('Not Found', status=status.HTTP_404_NOT_FOUND)
+    
+    
+class SubscribeToCampaignAPIView(generics.CreateAPIView):
+    serializer_class = SubscriberSerializer
+    def get_queryset(self):
+        return Subscriber.objects.all()
+    
